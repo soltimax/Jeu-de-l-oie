@@ -1,0 +1,407 @@
+🏚️ PROMPT — « LA MAISON HANTÉE » — JEU DE L'OIE COMPLET VERSION MANOIR HANTÉ
+Jeu complet jouable : écran des joueurs + plateau 63 pièces + dés + cartes + victoire
+Un seul fichier HTML autonome · Style cartoon gothique · Version 3.0
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. RÔLE ET MISSION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Tu es développeur front-end expert en jeux de plateau web et directeur
+artistique « cartoon gothique » (références : Corpse Bride, Adèle et la
+Princesse, Little Nightmares — sinistre mais adorable).
+
+Ta mission : construire un jeu de plateau COMPLET et JOUABLE nommé
+« La Maison Hantée » (Le Manoir Grimm), variante du Jeu de l'Oie. Le jeu
+reprend EXACTEMENT les mécaniques d'un jeu de l'oie modulaire existant
+(« Le Jardin des Oies »), habillées d'un univers de manoir hanté :
+
+- Un ÉCRAN D'ACCUEIL (« Le Vestibule ») où l'on choisit le NOMBRE DE
+  JOUEURS (2 à 6) puis où CHAQUE JOUEUR CHOISIT SA CRÉATURE (son pion)
+  et son nom — comme l'écran de préparation du jeu original.
+- Un plateau de 63 pièces en spirale, régénéré au hasard à chaque partie.
+- Des dés, des Cartes Chance, des Cartes Sortilège en main.
+- 11 actions à poids réglables, rebond sur la case 63, victoire pile.
+
+OBJECTIF N°1 : la page donne ENVIE dès le premier regard — sinistre à
+première vue, adorable à la seconde.
+
+LIVRABLE : un seul fichier HTML autonome (maison-hantee.html), 100 %
+fonctionnel hors ligne, sans build, sans serveur.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. PÉRIMÈTRE STRICT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+À FAIRE (tout le jeu) :
+- Écran 1 « Le Vestibule » : configuration complète des joueurs (§5).
+- Écran 2 « Le Manoir » : plateau 63 pièces + panneau de contrôle (§6-7).
+- Moteur complet : dés, déplacement animé, actions, cartes, victoire (§8).
+- Les 11 actions avec poids (§9), Cartes Chance & Sortilège (§10).
+- Modales : Chance, Victoire, Comment jouer, Poids des actions (§11).
+
+À NE JAMAIS FAIRE (exclusions définitives) :
+- AUCUN son, bruitage ou voix off (pas même un bouton muet).
+- AUCUN panneau développeur, API, éditeur de code, eval.
+- AUCUNE sauvegarde localStorage (la partie vit en mémoire uniquement).
+- Aucune image externe ni lien hors ligne (hors Tailwind CDN + Google
+  Fonts) ; toutes les illustrations sont embarquées (base64 ou SVG).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. DIRECTION ARTISTIQUE « CARTOON GOTHIQUE »
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PALETTE (obligatoire) :
+- Fond de page .............. #17121F (violet-noir)
+- Fond du plateau ........... #241B33 (velours sombre)
+- Fond des cases ............ #2E2440 (pieuvre)
+- Bordure des cases ......... rgba(255,255,255,0.08)
+- Accent principal .......... #F97316 (orange citrouille : boutons, lueurs)
+- Accent secondaire ......... #7FE7A4 (vert spectral)
+- Danger / recul ............ #E5484D (rouge framboise)
+- Or lumineux ............... #E8B84B (case 63 + victoire uniquement)
+- Texte principal ........... #F3EFE7 (linge ancien)
+- Texte secondaire .......... #A99FC1 (lavande grise)
+
+THÈMES DE CASES (fond / texte) :
+- default #2E2440 / #F3EFE7 · green #1F3A2E / #9FE7B8
+- blue #22304A / #A8C6F0 · yellow #4A3315 / #FFD98A
+- purple #3A2A52 / #D0BFFF · red #4A1F24 / #FFA3A8
+- gold #E8B84B / #2A1A05 (case 63 uniquement)
+
+TYPOGRAPHIE (Google Fonts) :
+- Titres et logo : « Creepster » (cartoon horreur).
+- Corps, boutons, chiffres : « Nunito » (rond et adorable — contraste
+  volontaire avec Creepster). Les numéros de cases restent en Nunito Bold.
+- Import : family=Creepster&family=Nunito:wght@400;600;700;800
+
+EFFETS D'AMBIANCE (CSS uniquement, sobres) :
+- Brouillard animé en bas de page : 2-3 couches de dégradés radiaux
+  translucides (opacity ≤ 0.06, dérive 30-60 s).
+- Lune fixe en haut à droite avec halo doux ; toile d'araignée SVG dans
+  le coin supérieur gauche du plateau.
+- Bougie qui vacille sur la case 63 (flicker 2 s) ; lueur violette
+  intérieure du conteneur plateau.
+- Le pion du joueur actif flotte (pulse vertical) ; les dés tremblent au
+  lancer (diceShake) ; le pion saute case par case (bounce).
+- Scrollbar personnalisée sombre ; overflow-x: hidden sur body.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. LES 6 CRÉATURES (pions des joueurs)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+| Créature   | Emoji | Lueur (couleur) | Fond doux |
+|------------|-------|-----------------|-----------|
+| Fantôme    | 👻    | #7FE7A4         | #1F3A2E   |
+| Vampire    | 🧛    | #E5484D         | #4A1F24   |
+| Citrouille | 🎃    | #F97316         | #4A2A15   |
+| Squelette  | 💀    | #E8D5A3         | #3A3220   |
+| Zombie     | 🧟    | #8BC34A         | #26331B   |
+| Chat noir  | 🐈‍⬛   | #A78BFA         | #2E2450   |
+
+- Sur le plateau, chaque pion = emoji (~18-22 px) posé sur une pastille
+  ronde de son « fond doux » pour rester lisible sur les cases sombres.
+- Plusieurs pions sur une même pièce : alignés côte à côte, taille
+  réduite si 3 pions ou plus.
+- Tooltip au survol d'un pion : « {Nom du joueur} · {Créature} ».
+- Le pion du joueur actif porte l'animation de flottement.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. ÉCRAN 1 — « LE VESTIBULE » (configuration, affiché au chargement)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AU CHARGEMENT : on arrive DIRECTEMENT sur cet écran plein page (fond
+#17121F, brouillard, lune, chauves-souris) — c'est l'équivalent exact de
+l'écran « Préparer la partie » du jeu original. Une seule grande carte
+centrée (fond #1D1628, bordure brume, coins très arrondis, max-w-2xl)
+contient tout.
+
+EN-TÊTE DE LA CARTE :
+- Kicker orange, lettres espacées : « LE MANOIR GRIMM ».
+- Titre Creepster : « Rassembler les courageux ».
+- Sous-titre : « Choisissez le nombre d'aventuriers, leur créature et
+  leur nom… avant que la lune ne soit haute. »
+
+SECTION 1 — « 1. Nombre d'aventuriers autour du manoir » :
+- 5 gros boutons chiffres : 2 / 3 / 4 / 5 / 6 (grille 5 colonnes).
+- Sélectionné = rempli orange #F97316, texte blanc, ombre portée ;
+  les autres = fond sombre, bordure brume.
+- Compteur live à droite du libellé : « 4 aventuriers ». Défaut : 4.
+
+SECTION 2 — « 2. Créature et nom de chaque aventurier » :
+- Une rangée-carte par joueur (fond #241B33, bordure brume, coins 16 px),
+  générée dynamiquement selon le nombre choisi :
+  · À gauche : grande pastille 48 px de la créature choisie (emoji sur
+    son fond doux) — elle s'actualise dès que le choix change.
+  · Au centre : label « Aventurier N » + champ texte du nom (max 20
+    caractères), pré-rempli avec le nom de la créature choisie
+    (ex. « Fantôme ») et librement éditable.
+  · En dessous : 6 mini-boutons de choix (un par créature : emoji + nom).
+    - Créature déjà prise par un autre joueur : désactivée (opacité 0.35,
+      curseur interdit, tooltip « Déjà prise »).
+    - Créature sélectionnée : liseré orange + fond doux de sa couleur.
+- Lien discret « Réinitialiser les noms » en haut à droite de la section.
+
+SECTION 3 — « 3. Les forces obscures (génération du manoir) » :
+- Curseur « Pièces piégées » : 10 % → 90 %, défaut 45 % (valeur affichée).
+- Curseur « Cartes Sortilège reçues par tour » : 0 % → 100 %, défaut 35 %.
+- Choix des dés : 2 boutons « 1 Dé (1-6) » / « 2 Dés (2-12) », défaut
+  2 dés.
+- Petite note : « Les pièges sont répartis au hasard à chaque partie. »
+
+PIED DE LA CARTE :
+- Note : « Chaque aventurier commence au Porche (case 1) avec 1 Carte
+  Sortilège en main. »
+- Gros bouton orange pleine largeur : « 🕯️ Entrer dans le manoir » →
+  transition fondue (0.4 s) vers l'Écran 2.
+
+PENDANT LA PARTIE : le bouton « Joueurs » de la barre supérieure rouvre
+ce même Vestibule en modale par-dessus le plateau (comme l'original).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. ÉCRAN 2 — LE PLATEAU (63 pièces en spirale)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BARRE SUPÉRIEURE (fine, sticky, fond #17121F + blur) :
+- Logo : petite maison hantée SVG (toit pointu, 2 fenêtres orange
+  lumineuses) sur tuile arrondie orange.
+- Titre « La Maison Hantée » en Creepster + slogan « Fuyez avant l'aube. »
+- Boutons : badge « 🌙 Nuit N » (manche en cours), « Joueurs », « Mélanger
+  le manoir » (régénère le plateau, mêmes joueurs), « Comment jouer »,
+  « Poids des actions ».
+
+EN-TÊTE PRINCIPAL : H1 Creepster « Osez entrer… » + sous-titre « Un peu
+de chance, des esprits farceurs et beaucoup de frissons. »
+
+CORPS EN 2 ZONES (desktop : plateau ≈ 66 % / contrôle ≈ 34 % ; empilées
+en mobile) — LE PLATEAU (fond #241B33, coins 28 px, lueur violette
+interne) :
+- Barre interne : « 🏚️ LE MANOIR GRIMM » (vert spectral) à gauche ;
+  « Manoir maudit · 1 ou 2 dés · 63 pièces » à droite.
+- CSS Grid 11 colonnes × 8 lignes, gap 8 px (4 px mobile), aspect-ratio
+  11/8. Chaque case = tuile arrondie 14 px fond #2E2440, numéro en
+  Nunito Bold #F3EFE7.
+
+COORDONNÉES EXACTES DE LA SPIRALE (r = ligne 0-7, c = colonne 0-10) :
+- Cases 1→8   : colonne 0, lignes 7→0 (montée à gauche)
+- Cases 9→18  : ligne 0, colonnes 1→10 (traversée haute)
+- Cases 19→25 : colonne 10, lignes 1→7 (descente à droite)
+- Cases 26→34 : ligne 7, colonnes 9→1 (traversée basse)
+- Cases 35→40 : colonne 1, lignes 6→1 (remontée intérieure gauche)
+- Cases 41→48 : ligne 1, colonnes 2→9 (traversée haute intérieure)
+- Cases 49→53 : colonne 9, lignes 2→6 (descente intérieure droite)
+- Cases 54→60 : ligne 6, colonnes 8→2 (traversée basse intérieure)
+- Cases 61→63 : colonne 2, lignes 5→3 (spirale finale vers le centre)
+
+CASES SPÉCIALES (ne reçoivent JAMAIS d'action) :
+- Case 1 « PORCHE » : liseré orange + étiquette — départ de tous les
+  pions.
+- Case 63 « SORTIE » : SEULE case dorée (#E8B84B), halo orange pulsant,
+  icône 🚪 + étiquette — elle rayonne au cœur du manoir.
+
+CASES ACTIONS (générées aléatoirement à chaque partie, §8) :
+- Selon le curseur « Pièces piégées » (45 % par défaut), chaque case 2 à
+  62 reçoit ou non une action, tirée au hasard PONDÉRÉ par les poids (§9).
+- Case à action : fond du thème de son action + icône + nom (max 18
+  caractères, Nunito Bold).
+- Survol : tooltip sombre « Pièce n°X — {nom} : {description} ».
+
+DÉCOR CENTRAL (espace libéré au cœur de la spirale, ~colonnes 3-9 /
+lignes 3-5) :
+- ILLUSTRATION DU MANOIR HANTÉ EMBARQUÉE dans le fichier : image générée
+  intégrée en base64 si tu en as la capacité, sinon SVG inline détaillé
+  équivalent — silhouette manoir + tour sur colline (#0F0B18), 6 fenêtres
+  orange #F97316 avec lueur dont une cassée, grande lune #E8D5A3 avec
+  halo, 3 chauves-souris, fantôme souriant flottant (animation),
+  citrouille taillée près de la porte, brouillard, clôture inclinée.
+- Titre Creepster sous l'image : « Fuyez avant l'aube ! » + sous-titre
+  « En route pour la pièce 63… »
+- Connecteurs courts (5×10 px, brume #3D3054) entre cases consécutives
+  pour guider l'œil le long du chemin.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. PANNEAU DE CONTRÔLE (colonne droite)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CARTE « C'EST À VOUS… » :
+- Kicker orange : « 🕯️ À VOTRE TOUR » + badge « Nuit N » (manche).
+- Titre : « C'est à toi, {Prénom} ! » + sous-texte d'ambiance.
+- Zone dés : 1 ou 2 dés selon config — tuiles sombres inclinées
+  (−6° / +6°), points violets, total en Creepster, légende « Dernier
+  lancer de {Prénom} ». Bouton orange « Lancer les dés » (désactivé
+  pendant les animations). Déplacement du pion animé case par case
+  (~180 ms/case).
+- Bannière d'événement après chaque action : fond #4A3315, bordure ambre,
+  icône + titre de l'action + narration.
+- Section « 🕯️ Tes Cartes Sortilège en main » (badge 0/3) : cartes
+  sombres à bordure violette (icône + nom + bouton « Jouer »), jouables
+  AVANT de lancer les dés. Si main vide : « Aucune carte en main… les
+  esprits dorment. »
+
+CARTE « LES RÉSIDENTS DU MANOIR » :
+- Une ligne par joueur : pastille créature, nom, « Pièce X », badge
+  « Passe son tour » si bloqué, mini-icônes de sa main. Joueur actif
+  surligné orange.
+
+CARTE « CE QUI S'EST PASSÉ CETTE NUIT » (journal narratif) :
+- Entrées horodatées « Nuit N » : chaque événement cite le joueur,
+  l'effet et la pièce d'arrivée. Scroll interne (max-height).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. MOTEUR DE JEU (règles identiques au Jeu de l'Oie modulaire)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ÉTAT EN MÉMOIRE (aucun localStorage) :
+gameState = {
+  board: [ { number: 1..63, actionId: String|null } ],
+  players: [ { id, name, creature, emoji, color, bgSoft,
+               position: 1..63, skipTurns: 0, hand: [actionId...] } ],
+  turnIndex, round, maxCell: 63,
+  config: {
+    coverage: 45,       // % de cases 2-62 recevant une action
+    cardDropProb: 35,   // % de Carte Sortilège reçue en fin de tour
+    diceCount: 2,       // 1 ou 2 dés
+    exactBounce: true,  // rebond obligatoire sur la case 63
+    weights: { actionId: nombre 1-100 }
+  }
+}
+
+GÉNÉRATION ALÉATOIRE : à chaque « Entrer dans le manoir » ou « Mélanger
+le manoir », les cases 2 à 62 reçoivent (ou non, selon coverage %) une
+action tirée au hasard pondéré par les poids. Cases 1 et 63 : jamais.
+
+TOUR DE JEU (dans l'ordre) :
+1. Si skipTurns > 0 : décrémenter, journal « {nom} passe son tour »,
+   passer au suivant.
+2. Le joueur peut jouer 0 à N Cartes Sortilège de sa main (avant les
+   dés) ; chaque effet s'applique immédiatement.
+3. Lancer des dés (secousse CSS), puis avancée animée case par case.
+4. Dépassement de 63 : REBOND — position = 63 − surplus. Ex. : en pièce
+   60 avec un 7 → 63 − 4 = 59.
+5. Pile sur 63 → VICTOIRE (§11). Sinon, si la pièce porte une action :
+   l'appliquer immédiatement (message narratif au journal, animation du
+   pion, chaînage possible si l'action en déclenche une autre, ex.
+   Bougie Magique → Carte Chance).
+6. Fin de tour : tirage aléatoire → le joueur reçoit une Carte Sortilège
+   (cardDropProb %) tirée parmi les actions recevables en main. Main
+   limitée à 3 : au-delà, la carte s'envole.
+7. Joueur suivant (ordre du Vestibule) ; round (Nuit) +1 après le dernier.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. LES 11 ACTIONS DU MANOIR (transposition obligatoire)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Garde les id moteur de l'original ; seuls noms, icônes, descriptions et
+textes sont transposés. « Carte en main : non » = canBePlayerCard: false.
+
+| id moteur | Nom affiché | Icône | Thème | Poids | Effet exact | Carte en main | Description affichée |
+|---|---|---|---|---|---|---|---|
+| replay | Frisson d'Adrénaline | 👻 | green | 26 | rejouer immédiatement | oui | « Une force invisible te traverse : relance les dés immédiatement ! » |
+| double_roll | La Peur au Ventre | 💨 | green | 20 | avance du dernier lancer (+4 si joué en carte) | oui | « Quelque chose te poursuit : fuis une seconde fois du montant du dernier lancer ! » |
+| back_2 | Parquet Pourri | 🪵 | red | 18 | −2 cases | non | « Le parquet cède sous tes pas : recule de 2 pièces. » |
+| swap_ahead | Corps Poltergeist | 🔀 | purple | 16 | échange ta place avec le joueur juste devant | oui | « Un esprit farceur échange ta place avec le joueur devant toi ! » |
+| leader_penalty_or_boost | Le Bal des Fantômes | ⚖️ | blue | 18 | si en tête : −nbJoueurs ; sinon +nbJoueurs | oui | « Les esprits dansent en cercle : le premier recule, le dernier avance ! » |
+| draw_chance | Bougie Magique | 🕯️ | yellow | 24 | tirer une Carte Chance | oui | « Allume la bougie noire : un esprit te souffle une prédiction… » |
+| bridge_boost | Passage Secret | 🚪 | blue | 14 | +6 cases | oui | « Une porte dérobée s'ouvre dans la bibliothèque : file 6 pièces plus loin ! » |
+| skip_turn | Coincé sous les Draps | 🕸️ | yellow | 12 | passe le prochain tour | non | « Un fantôme s'est endormi sur toi. Impossible de bouger : passe un tour. » |
+| labyrinth_back | Couloir Sans Fin | 🌀 | purple | 12 | −4 cases | non | « Les couloirs du manoir tournent en rond : recule de 4 pièces. » |
+| forward_3 | Courant Spectral | 🌬️ | green | 18 | +3 cases | oui | « Un courant d'air glacial te pousse vers l'avant : +3 pièces ! » |
+| return_start | Le Faucheur | ☠️ | red | 7 | −8 cases | non | « Tu croises LE FAUCHEUR dans l'escalier : recule de 8 pièces ! » |
+
+- Chaque exécution écrit au journal une phrase narrée citant le joueur,
+  l'effet et la pièce d'arrivée. Ex. : « {nom} file par le Passage Secret
+  (pièce {pos}) ! » · « {nom} a croisé le Faucheur… −8 pièces ! »
+- Les cases du plateau utilisent fond + icône + nom du thème de l'action.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+10. LES CARTES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Un même registre d'actions alimente trois canaux (comme l'original) :
+les cases du plateau, les Cartes Chance, les Cartes Sortilège en main.
+
+CARTE CHANCE (tirage immédiat) :
+- Déclenchée par l'action « Bougie Magique » (case ou carte).
+- MODALE : kicker « LE SPIRITISME A PARLÉ ! », grande icône 🔮 sur tuile
+  violette, la carte tirée (icône + nom + description, bordure de son
+  thème), bouton « Appliquer la prédiction de l'esprit ».
+- Tirée parmi les actions canBeChanceCard = true (jamais « Bougie
+  Magique » elle-même, pour éviter la boucle).
+
+CARTE SORTILÈGE (en main) :
+- Reçue en FIN DE TOUR (cardDropProb %) parmi les actions
+  canBePlayerCard = true, avec une petite animation de distribution.
+- Chaque joueur en reçoit UNE au début de la partie (main initiale).
+- Jouable uniquement pendant le tour de son propriétaire, AVANT les dés.
+  Max 3 en main.
+- DESIGN (identique pour les deux types) : fond #1D1628, bordure du
+  thème, coin arrondi, icône dans une pastille, nom en Nunito Bold,
+  description en #A99FC1, mention « Carte Sortilège » ou « Carte Chance ».
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+11. MODALES SECONDAIRES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VICTOIRE (pile sur la pièce 63) :
+- Kicker doré « L'AUBE SE LÈVE ! » ; grand 🌅 sur tuile or.
+- Titre : « {Prénom} s'échappe du Manoir Grimm ! »
+- Texte : « La porte claque derrière toi. Dehors, le soleil illumine le
+  jardin… mais le manoir, lui, attend déjà de nouveaux visiteurs. »
+- Boutons : « Changer les aventuriers » (rouvre le Vestibule) et
+  « Rentrer à nouveau (mêmes créatures) » (rejoue tel quel).
+
+COMMENT JOUER (4 points, bouton « J'ai compris, j'ose entrer ! ») :
+1. Objectif : atteindre PILE la pièce 63 (rebond si dépassement).
+2. Le manoir change : les pièges sont répartis au hasard à chaque partie.
+3. Cartes Chance : certaines pièces déclenchent le spiritisme.
+4. Cartes Sortilège : reçues en fin de tour (max 3), jouables avant les
+   dés.
+
+POIDS DES ACTIONS (« Les forces obscures ») :
+- Liste des 11 actions : icône, nom, curseur de poids 1-100 (valeur
+  affichée) — les poids gouvernent la fréquence au plateau et aux cartes.
+- Case « Rebond obligatoire sur la pièce 63 » (cochée par défaut).
+- Bouton « Réinitialiser les forces obscures » (poids d'origine).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+12. CONTRAINTES TECHNIQUES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. UN SEUL fichier HTML : Tailwind CDN + Google Fonts + JS vanilla ES6
+   inline. Aucun framework, aucune image externe, aucun fichier audio.
+2. Config Tailwind inline : couleurs custom night #17121F, velvet
+   #241B33, cell #2E2440, pumpkin #F97316, spectral #7FE7A4, blood
+   #E5484D, dawn #E8B84B, bone #F3EFE7, lavender #A99FC1 ; familles
+   font-title (Creepster) / font-sans (Nunito).
+3. Toute la logique en JS vanilla dans le fichier ; état en mémoire
+   uniquement (PAS de localStorage).
+4. Responsive 360 px → 1440 px : plateau plein largeur en mobile (gap
+   4 px, numéros réduits), panneaux empilés dessous ; cibles tactiles
+   ≥ 44 px.
+5. Accessibilité : contrastes AA, rôles ARIA sur les modales, navigation
+   clavier.
+6. Animations CSS transform/opacity uniquement, sobres et fluides.
+7. Tous les textes en FRANÇAIS, avec les emoji exacts fournis.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+13. CRITÈRES D'ACCEPTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[ ] Au chargement, le Vestibule (§5) s'affiche : nombre de joueurs 2-6,
+    choix de créature UNIQUE par joueur (pas deux fois la même), noms
+    éditables, curseurs 45 % / 35 %, dés 1 ou 2, bouton d'entrée.
+[ ] Les 63 cases sont placées EXACTEMENT aux coordonnées de la spirale
+    (§6) avec connecteurs ; case 1 PORCHE (liseré orange) et case 63
+    SORTIE (dorée, halo pulsant).
+[ ] Une partie complète se joue de bout en bout : entrée dans le manoir →
+    dés → déplacement animé → actions de cases → Cartes Chance → cartes
+    reçues en fin de tour → victoire PILE sur 63 avec rebond.
+[ ] Les 11 actions du §9 existent avec poids, icônes, thèmes et effets
+    exacts ; la génération pondérée respecte le curseur de couverture.
+[ ] Cartes Chance (modale spiritisme) et Cartes Sortilège (max 3,
+    jouables avant les dés, 1 en main au départ) : tout fonctionne.
+[ ] Le panneau liste les résidents, le journal narre chaque événement,
+    la bannière d'événement apparaît à chaque action.
+[ ] La victoire propose « Changer les aventuriers » / « Rentrer à
+    nouveau », et « Mélanger le manoir » régénère le plateau.
+[ ] AUCUNE erreur console ; AUCUN son ; AUCUN panneau API ; AUCUN
+    localStorage.
+[ ] L'illustration du manoir est embarquée (base64 ou SVG détaillé) —
+    fichier 100 % autonome, responsive mobile/desktop.
+[ ] Ambiance « cartoon gothique » : sinistre à première vue, adorable à
+    la seconde.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+14. LIVRABLE ATTENDU
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Un unique fichier « maison-hantee.html » complet, prêt à ouvrir dans un
+navigateur, contenant TOUT le jeu (Vestibule + plateau + moteur + cartes
++ modales). Si tu disposes d'une génération d'images, intègre
+l'illustration du manoir en base64 ; sinon dessine-la en SVG inline
+détaillé. Commence directement par le code, sans préambule ni explication.
