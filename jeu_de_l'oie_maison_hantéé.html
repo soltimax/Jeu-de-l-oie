@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Maison Hantée — Le Manoir Grimm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        night:   '#17121F',
+        velvet:  '#241B33',
+        cell:    '#2E2440',
+        pumpkin: '#F97316',
+        spectral:'#7FE7A4',
+        blood:   '#E5484D',
+        dawn:    '#E8B84B',
+        bone:    '#F3EFE7',
+        lavender:'#A99FC1',
+        mist:    '#3D3054'
+      },
+      fontFamily: {
+        title: ['Creepster','cursive'],
+        sans:  ['Nunito','sans-serif']
+      }
+    }
+  }
+}
+</script>
+<style>
+  html,body{background:#17121F;color:#F3EFE7;font-family:'Nunito',sans-serif;overflow-x:hidden;}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:#17121F}
+  ::-webkit-scrollbar-thumb{background:#3D3054;border-radius:6px}
+  ::-webkit-scrollbar-thumb:hover{background:#55436f}
+
+  /* ---------- Ambiance ---------- */
+  .fog-layer{position:fixed;left:-20%;width:140%;height:34vh;bottom:-6vh;pointer-events:none;z-index:5;
+    background:radial-gradient(ellipse 55% 90% at 20% 100%, rgba(169,159,193,.55), transparent 70%),
+               radial-gradient(ellipse 45% 80% at 60% 100%, rgba(127,231,164,.30), transparent 70%),
+               radial-gradient(ellipse 50% 85% at 90% 100%, rgba(240,115,60,.28), transparent 70%);
+    opacity:.06;animation:fogDrift 46s ease-in-out infinite alternate;}
+  .fog-layer.f2{height:26vh;opacity:.05;animation-duration:34s;animation-direction:alternate-reverse;
+    background:radial-gradient(ellipse 50% 90% at 35% 100%, rgba(169,159,193,.6), transparent 70%),
+               radial-gradient(ellipse 40% 75% at 75% 100%, rgba(58,42,82,.8), transparent 70%);}
+  @keyframes fogDrift{from{transform:translateX(-6%)}to{transform:translateX(7%)}}
+  .moon{position:fixed;top:26px;right:34px;width:88px;height:88px;border-radius:9999px;z-index:2;pointer-events:none;
+    background:radial-gradient(circle at 38% 34%, #F6EBC8, #E8D5A3 60%, #C9B27E);
+    box-shadow:0 0 34px 14px rgba(232,213,163,.22), 0 0 90px 40px rgba(232,213,163,.10);}
+  .moon::after{content:'';position:absolute;inset:0;border-radius:9999px;
+    background:radial-gradient(circle at 70% 30%, rgba(23,18,31,.16) 0 12%, transparent 13%),
+               radial-gradient(circle at 45% 60%, rgba(23,18,31,.14) 0 8%, transparent 9%),
+               radial-gradient(circle at 25% 42%, rgba(23,18,31,.12) 0 7%, transparent 8%);}
+  @media (max-width:640px){.moon{width:56px;height:56px;top:14px;right:14px}}
+
+  .screen{transition:opacity .4s ease;min-height:100vh}
+  .screen.hidden-fade{opacity:0;pointer-events:none;position:absolute;inset:0;visibility:hidden}
+
+  /* ---------- Cartes & boutons ---------- */
+  .card-gothic{background:#1D1628;border:1px solid rgba(169,159,193,.25);border-radius:24px;
+    box-shadow:0 18px 50px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.05);}
+  .btn{min-height:44px;transition:transform .12s ease, box-shadow .12s ease, background .15s ease;}
+  .btn:hover{transform:translateY(-1px)}
+  .btn:active{transform:translateY(1px)}
+  .btn-pumpkin{background:#F97316;color:#fff;box-shadow:0 8px 22px rgba(249,115,22,.35)}
+  .btn-pumpkin:hover{background:#fb8a3c}
+  .btn-ghost{background:#241B33;border:1px solid rgba(169,159,193,.3);color:#F3EFE7}
+  .btn-ghost:hover{border-color:#F97316}
+  .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+  input[type=range]{-webkit-appearance:none;appearance:none;height:8px;border-radius:9999px;background:#3D3054;outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:9999px;
+    background:#F97316;border:3px solid #17121F;box-shadow:0 0 10px rgba(249,115,22,.6);cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:9999px;background:#F97316;border:3px solid #17121F;cursor:pointer}
+
+  /* ---------- Modales ---------- */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(10,7,16,.78);backdrop-filter:blur(4px);z-index:60;
+    display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .25s ease}
+  .modal-backdrop.open{opacity:1;pointer-events:auto}
+  .modal-box{transform:translateY(14px) scale(.98);transition:transform .25s ease;max-height:92vh;overflow-y:auto}
+  .modal-backdrop.open .modal-box{transform:translateY(0) scale(1)}
+
+  /* ---------- Plateau ---------- */
+  .board-wrap{background:#241B33;border-radius:28px;box-shadow:inset 0 0 90px rgba(120,80,200,.14), 0 20px 60px rgba(0,0,0,.5);}
+  #board{position:relative;display:grid;grid-template-columns:repeat(11,1fr);grid-template-rows:repeat(8,1fr);
+    gap:8px;aspect-ratio:11/8;width:100%}
+  @media (max-width:640px){#board{gap:4px}}
+  .cellx{background:#2E2440;border:1px solid rgba(255,255,255,.08);border-radius:14px;position:relative;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:2px;overflow:hidden;
+    transition:transform .15s ease}
+  .cellx .num{font-weight:800;font-size:11px;line-height:1;color:#F3EFE7;opacity:.85}
+  @media (max-width:640px){.cellx .num{font-size:8px}.cellx{border-radius:8px}}
+  .cellx:hover{transform:scale(1.06);z-index:20}
+  .cell-name{font-weight:800;font-size:9px;line-height:1.1;text-align:center;max-width:98%;overflow:hidden;
+    text-overflow:ellipsis;white-space:nowrap}
+  @media (max-width:640px){.cell-name{display:none}}
+  .cell-icon{font-size:15px;line-height:1}
+  @media (max-width:640px){.cell-icon{font-size:11px}}
+  .cellx.porch{border:2px solid #F97316;box-shadow:0 0 14px rgba(249,115,22,.45)}
+  .cellx.exit{background:#E8B84B;border-color:#E8B84B;animation:goldPulse 2.2s ease-in-out infinite}
+  .cellx.exit .num{color:#2A1A05;opacity:1}
+  @keyframes goldPulse{0%,100%{box-shadow:0 0 14px 4px rgba(232,184,75,.45)}50%{box-shadow:0 0 30px 10px rgba(249,115,22,.6)}}
+  .candle{position:absolute;top:2px;right:3px;font-size:11px;animation:flicker 2s infinite}
+  @keyframes flicker{0%,100%{opacity:1;transform:scale(1)}20%{opacity:.6;transform:scale(.92)}45%{opacity:.95;transform:scale(1.05)}70%{opacity:.7;transform:scale(.95)}}
+
+  .connector{position:absolute;width:10px;height:5px;background:#3D3054;border-radius:3px;z-index:1;pointer-events:none}
+
+  /* Pions */
+  .pawn{width:26px;height:26px;border-radius:9999px;display:flex;align-items:center;justify-content:center;
+    font-size:16px;border:1.5px solid rgba(255,255,255,.18);box-shadow:0 3px 8px rgba(0,0,0,.5);position:relative;z-index:10}
+  @media (max-width:640px){.pawn{width:18px;height:18px;font-size:11px}}
+  .pawn.active-pawn{animation:floaty 1.6s ease-in-out infinite;z-index:30}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  .pawn.hop{animation:hop .18s ease}
+  @keyframes hop{0%{transform:translateY(0) scale(1)}50%{transform:translateY(-9px) scale(1.12)}100%{transform:translateY(0) scale(1)}}
+  .pawn.small{width:18px;height:18px;font-size:10px}
+  @media (max-width:640px){.pawn.small{width:13px;height:13px;font-size:8px}}
+  .pawns-row{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:2px;pointer-events:auto;flex-wrap:wrap;padding:2px}
+
+  .tip{position:fixed;background:#0F0B18;border:1px solid rgba(169,159,193,.4);color:#F3EFE7;font-size:12px;
+    padding:6px 10px;border-radius:10px;pointer-events:none;z-index:99;max-width:240px;display:none;box-shadow:0 8px 24px rgba(0,0,0,.6)}
+
+  /* Dés */
+  .die{width:52px;height:52px;background:#1D1628;border:1px solid rgba(169,159,193,.35);border-radius:12px;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,.5)}
+  .die .pips{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;width:60%}
+  .pip{width:8px;height:8px;border-radius:9999px;background:#A78BFA;align-self:center;justify-self:center}
+  .dice-shake{animation:diceShake .5s ease-in-out infinite}
+  @keyframes diceShake{0%,100%{transform:rotate(-6deg) translateY(0)}25%{transform:rotate(5deg) translateY(-6px)}
+    50%{transform:rotate(-4deg) translateY(-3px)}75%{transform:rotate(7deg) translateY(-5px)}}
+
+  .banner{background:#4A3315;border:1px solid #E8B84B;border-radius:14px}
+  .spell-card{background:#1D1628;border:1px solid #7c5cd6;border-radius:14px}
+  .deal-in{animation:dealIn .45s ease}
+  @keyframes dealIn{from{opacity:0;transform:translateY(-10px) rotate(-4deg)}to{opacity:1;transform:none}}
+
+  .ghost-float{animation:ghostFloat 3.4s ease-in-out infinite}
+  @keyframes ghostFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+  .bat-fly{animation:batFly 7s ease-in-out infinite;transform-origin:center}
+  @keyframes batFly{0%,100%{transform:translate(0,0)}25%{transform:translate(8px,-6px)}50%{transform:translate(-4px,-12px)}75%{transform:translate(-10px,-4px)}}
+  .win-glow{box-shadow:0 0 60px rgba(232,184,75,.4)}
+  .sk-clear{scrollbar-width:thin}
+</style>
+</head>
+<body class="antialiased">
+<div class="fog-layer"></div>
+<div class="fog-layer f2"></div>
+<div class="moon" aria-hidden="true"></div>
+<div id="tooltip" class="tip" role="tooltip"></div>
+<!-- ============ ÉCRAN 1 : LE VESTIBULE ============ -->
+<section id="screen-lobby" class="screen flex items-start sm:items-center justify-center p-4 sm:py-10 relative z-10">
+  <div class="card-gothic w-full max-w-2xl p-6 sm:p-8">
+    <header class="text-center mb-6">
+      <p class="text-pumpkin tracking-[.3em] text-xs font-bold mb-2">LE MANOIR GRIMM</p>
+      <h1 class="font-title text-4xl sm:text-5xl text-bone">Rassembler les courageux</h1>
+      <p class="text-lavender text-sm mt-2">Choisissez le nombre d'aventuriers, leur créature et leur nom… avant que la lune ne soit haute.</p>
+    </header>
+
+    <!-- Section 1 : nombre -->
+    <div class="mb-6">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-extrabold text-sm tracking-wide text-bone">1. Nombre d'aventuriers autour du manoir</h2>
+        <span id="playerCountLabel" class="text-pumpkin font-bold text-sm whitespace-nowrap ml-3">4 aventuriers</span>
+      </div>
+      <div class="grid grid-cols-5 gap-2" id="countButtons">
+        <button class="btn btn-ghost rounded-xl font-extrabold text-lg py-3" data-count="2">2</button>
+        <button class="btn btn-ghost rounded-xl font-extrabold text-lg py-3" data-count="3">3</button>
+        <button class="btn btn-pumpkin rounded-xl font-extrabold text-lg py-3" data-count="4">4</button>
+        <button class="btn btn-ghost rounded-xl font-extrabold text-lg py-3" data-count="5">5</button>
+        <button class="btn btn-ghost rounded-xl font-extrabold text-lg py-3" data-count="6">6</button>
+      </div>
+    </div>
+
+    <!-- Section 2 : joueurs -->
+    <div class="mb-6">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-extrabold text-sm tracking-wide text-bone">2. Créature et nom de chaque aventurier</h2>
+        <button id="resetNames" class="text-xs text-lavender underline hover:text-pumpkin transition-colors">Réinitialiser les noms</button>
+      </div>
+      <div id="playerRows" class="space-y-3"></div>
+    </div>
+
+    <!-- Section 3 : forces obscures -->
+    <div class="mb-6 bg-velvet/60 border border-mist rounded-2xl p-4">
+      <h2 class="font-extrabold text-sm tracking-wide text-bone mb-3">3. Les forces obscures (génération du manoir)</h2>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label class="flex justify-between text-xs text-lavender mb-1"><span>Pièces piégées</span><span id="coverageVal" class="text-pumpkin font-bold">45 %</span></label>
+          <input id="coverage" type="range" min="10" max="90" value="45" class="w-full">
+        </div>
+        <div>
+          <label class="flex justify-between text-xs text-lavender mb-1"><span>Cartes Sortilège reçues par tour</span><span id="cardDropVal" class="text-pumpkin font-bold">35 %</span></label>
+          <input id="cardDrop" type="range" min="0" max="100" value="35" class="w-full">
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-2 mt-4">
+        <span class="text-xs text-lavender mr-1">Dés :</span>
+        <button id="dice1" class="btn btn-ghost rounded-xl px-4 py-2 text-xs font-bold">1 Dé (1-6)</button>
+        <button id="dice2" class="btn btn-pumpkin rounded-xl px-4 py-2 text-xs font-bold">2 Dés (2-12)</button>
+      </div>
+      <p class="text-[11px] text-lavender mt-3 opacity-70">Les pièges sont répartis au hasard à chaque partie.</p>
+    </div>
+
+    <footer>
+      <p class="text-xs text-lavender text-center mb-3">Chaque aventurier commence au Porche (case 1) avec 1 Carte Sortilège en main.</p>
+      <button id="enterManor" class="btn btn-pumpkin w-full rounded-2xl py-4 font-extrabold text-lg">🕯️ Entrer dans le manoir</button>
+    </footer>
+  </div>
+</section>
+
+<!-- ============ ÉCRAN 2 : LE MANOIR ============ -->
+<section id="screen-game" class="screen hidden-fade relative z-10">
+  <!-- Barre supérieure -->
+  <header class="sticky top-0 z-40 bg-night/85 backdrop-blur border-b border-mist/60">
+    <div class="max-w-[1400px] mx-auto px-3 sm:px-5 h-14 flex items-center gap-3">
+      <span class="w-9 h-9 rounded-xl bg-pumpkin flex items-center justify-center shadow-[0_0_16px_rgba(249,115,22,.5)] shrink-0">
+        <svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" aria-hidden="true">
+          <path d="M4 11 12 4l8 7v9H4v-9z" fill="#17121F"/>
+          <rect x="8.4" y="10" width="2.4" height="2.6" rx=".5" fill="#F97316"/>
+          <rect x="13.2" y="10" width="2.4" height="2.6" rx=".5" fill="#F97316"/>
+          <rect x="10.6" y="15" width="2.8" height="4" rx=".5" fill="#17121F"/>
+        </svg>
+      </span>
+      <div class="mr-auto leading-tight min-w-0">
+        <span class="font-title text-xl sm:text-2xl text-bone block truncate">La Maison Hantée</span>
+        <span class="text-lavender text-[10px] sm:text-xs hidden sm:block">Fuyez avant l'aube.</span>
+      </div>
+      <span class="btn-ghost rounded-full px-3 py-1.5 text-xs font-bold text-spectral whitespace-nowrap">🌙 <span id="roundBadgeTop">Nuit 1</span></span>
+      <button id="btnPlayers" class="btn btn-ghost rounded-xl px-3 py-2 text-xs font-bold whitespace-nowrap">Joueurs</button>
+      <button id="btnShuffle" class="btn btn-ghost rounded-xl px-3 py-2 text-xs font-bold whitespace-nowrap hidden md:block">Mélanger le manoir</button>
+      <button id="btnRules" class="btn btn-ghost rounded-xl px-3 py-2 text-xs font-bold whitespace-nowrap hidden sm:block">Comment jouer</button>
+      <button id="btnWeights" class="btn btn-ghost rounded-xl px-3 py-2 text-xs font-bold whitespace-nowrap hidden md:block">Poids des actions</button>
+      <button id="btnRulesM" class="btn btn-ghost rounded-xl px-3 py-2 text-xs font-bold sm:hidden" aria-label="Comment jouer">?</button>
+    </div>
+  </header>
+
+  <main class="max-w-[1400px] mx-auto px-3 sm:px-5 py-5">
+    <div class="mb-5">
+      <h1 class="font-title text-4xl sm:text-5xl text-bone">Osez entrer…</h1>
+      <p class="text-lavender text-sm mt-1">Un peu de chance, des esprits farceurs et beaucoup de frissons.</p>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-5 items-start">
+      <!-- PLATEAU -->
+      <div class="lg:col-span-2 board-wrap p-3 sm:p-5 relative">
+        <svg class="absolute top-3 left-3 w-16 h-16 opacity-50 pointer-events-none z-20" viewBox="0 0 100 100" aria-hidden="true">
+          <g stroke="#A99FC1" stroke-width="1.2" fill="none" opacity=".8">
+            <path d="M0 0 L100 0 M0 0 L0 100"/>
+            <path d="M0 0 L86 86 M0 0 L60 95 M0 0 L95 60 M0 0 L40 92 M0 0 L92 40 M0 0 L18 80 M0 0 L80 18"/>
+            <path d="M14 14 Q34 26 26 46 Q44 34 46 56 Q58 40 66 60 Q70 36 88 40 Q76 22 92 14" stroke-width="1"/>
+            <circle cx="14" cy="14" r="2" fill="#A99FC1"/><circle cx="26" cy="46" r="1.6" fill="#A99FC1"/>
+            <circle cx="46" cy="56" r="1.6" fill="#A99FC1"/><circle cx="66" cy="60" r="1.6" fill="#A99FC1"/>
+            <circle cx="88" cy="40" r="1.6" fill="#A99FC1"/>
+          </g>
+        </svg>
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3 pl-14 sm:pl-20">
+          <span class="font-title text-lg sm:text-xl text-spectral tracking-wide">🏚️ LE MANOIR GRIMM</span>
+          <span class="text-lavender text-[11px] sm:text-xs" id="boardMeta">Manoir maudit · 2 dés · 63 pièces</span>
+        </div>
+        <div id="board"></div>
+        <div class="text-center mt-4">
+          <span class="font-title text-2xl sm:text-3xl text-bone block">Fuyez avant l'aube !</span>
+          <span class="text-lavender text-xs">En route pour la pièce 63…</span>
+        </div>
+      </div>
+
+      <!-- PANNEAU DE CONTRÔLE -->
+      <div class="space-y-5">
+        <div class="card-gothic p-5">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-pumpkin tracking-[.2em] text-[11px] font-bold">🕯️ À VOTRE TOUR</span>
+            <span class="btn-ghost rounded-full px-3 py-1 text-[11px] font-bold text-spectral" id="roundBadgePanel">Nuit 1</span>
+          </div>
+          <h2 class="font-extrabold text-lg text-bone" id="turnTitle">C'est à toi…</h2>
+          <p class="text-lavender text-xs mb-3" id="turnFlavor">Les planches craquent sous tes pas…</p>
+
+          <div class="flex items-center gap-3 mb-3" id="diceArea">
+            <div class="flex gap-3" id="diceRow"></div>
+            <div class="leading-tight">
+              <span class="font-title text-3xl text-pumpkin" id="diceTotal">—</span>
+              <span class="block text-[10px] text-lavender" id="diceLegend">Dernier lancer</span>
+            </div>
+          </div>
+
+          <button id="btnRoll" class="btn btn-pumpkin w-full rounded-xl py-3.5 font-extrabold">🎲 Lancer les dés</button>
+          <div id="eventBanner" class="banner p-3 mt-3 hidden">
+            <p class="font-extrabold text-sm text-dawn" id="bannerTitle"></p>
+            <p class="text-xs text-bone/90 mt-1" id="bannerText"></p>
+          </div>
+
+          <div class="mt-4">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-xs font-extrabold text-bone">🕯️ Tes Cartes Sortilège en main</h3>
+              <span class="text-[10px] text-lavender border border-mist rounded-full px-2 py-0.5" id="handBadge">0/3</span>
+            </div>
+            <div id="handCards" class="space-y-2"></div>
+          </div>
+        </div>
+
+        <div class="card-gothic p-5">
+          <h3 class="text-xs font-extrabold tracking-wide text-bone mb-3">👻 LES RÉSIDENTS DU MANOIR</h3>
+          <div id="residents" class="space-y-2"></div>
+        </div>
+
+        <div class="card-gothic p-5">
+          <h3 class="text-xs font-extrabold tracking-wide text-bone mb-3">📜 CE QUI S'EST PASSÉ CETTE NUIT</h3>
+          <div id="log" class="space-y-2 text-xs overflow-y-auto sk-clear pr-1" style="max-height:260px"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</section>
+<!-- ============ MODALES ============ -->
+<!-- Vestibule (reouverture) -->
+<div id="modalLobby" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Configuration des joueurs">
+  <div class="modal-box card-gothic w-full max-w-2xl p-6 relative">
+    <button class="modal-close absolute top-4 right-4 btn btn-ghost rounded-full w-9 h-9 font-bold" data-target="modalLobby" aria-label="Fermer">✕</button>
+    <div id="lobbyModalContent"></div>
+  </div>
+</div>
+
+<!-- Chance -->
+<div id="modalChance" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Carte Chance">
+  <div class="modal-box card-gothic w-full max-w-md p-6 text-center relative">
+    <p class="text-purple-300 tracking-[.25em] text-[11px] font-bold mb-3" style="color:#D0BFFF">LE SPIRITISME A PARLÉ !</p>
+    <div class="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center text-4xl mb-4" style="background:#3A2A52;box-shadow:0 0 30px rgba(208,191,255,.3)">🔮</div>
+    <div id="chanceCardBox"></div>
+    <button id="btnApplyChance" class="btn btn-pumpkin w-full rounded-xl py-3 font-extrabold mt-4">Appliquer la prédiction de l'esprit</button>
+  </div>
+</div>
+
+<!-- Victoire -->
+<div id="modalWin" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Victoire">
+  <div class="modal-box card-gothic w-full max-w-md p-8 text-center win-glow relative" style="border-color:#E8B84B">
+    <p class="tracking-[.25em] text-[11px] font-bold mb-3" style="color:#E8B84B">L'AUBE SE LÈVE !</p>
+    <div class="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center text-4xl mb-4" style="background:#E8B84B;box-shadow:0 0 40px rgba(232,184,75,.5)">🌅</div>
+    <h2 class="font-title text-3xl text-bone mb-2" id="winTitle"></h2>
+    <p class="text-lavender text-sm mb-6">La porte claque derrière toi. Dehors, le soleil illumine le jardin… mais le manoir, lui, attend déjà de nouveaux visiteurs.</p>
+    <div class="space-y-2">
+      <button id="btnWinNew" class="btn btn-ghost w-full rounded-xl py-3 font-bold">Changer les aventuriers</button>
+      <button id="btnWinReplay" class="btn btn-pumpkin w-full rounded-xl py-3 font-extrabold">Rentrer à nouveau (mêmes créatures)</button>
+    </div>
+  </div>
+</div>
+
+<!-- Comment jouer -->
+<div id="modalRules" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Comment jouer">
+  <div class="modal-box card-gothic w-full max-w-md p-6 relative">
+    <button class="modal-close absolute top-4 right-4 btn btn-ghost rounded-full w-9 h-9 font-bold" data-target="modalRules" aria-label="Fermer">✕</button>
+    <p class="text-pumpkin tracking-[.25em] text-[11px] font-bold mb-1">LE LIVRE DU MANOIR</p>
+    <h2 class="font-title text-3xl text-bone mb-4">Comment jouer</h2>
+    <ol class="space-y-3 text-sm text-bone/90 list-none">
+      <li class="flex gap-3"><span class="shrink-0 w-7 h-7 rounded-lg bg-pumpkin/20 text-pumpkin font-extrabold flex items-center justify-center">1</span><span><b class="text-bone">Objectif :</b> atteindre <b>PILE</b> la pièce 63. Si tu dépasses, tu rebondis en arrière…</span></li>
+      <li class="flex gap-3"><span class="shrink-0 w-7 h-7 rounded-lg bg-pumpkin/20 text-pumpkin font-extrabold flex items-center justify-center">2</span><span><b class="text-bone">Le manoir change :</b> les pièges sont répartis au hasard à chaque partie.</span></li>
+      <li class="flex gap-3"><span class="shrink-0 w-7 h-7 rounded-lg bg-pumpkin/20 text-pumpkin font-extrabold flex items-center justify-center">3</span><span><b class="text-bone">Cartes Chance :</b> certaines pièces déclenchent le spiritisme… 🔮</span></li>
+      <li class="flex gap-3"><span class="shrink-0 w-7 h-7 rounded-lg bg-pumpkin/20 text-pumpkin font-extrabold flex items-center justify-center">4</span><span><b class="text-bone">Cartes Sortilège :</b> reçues en fin de tour (max 3), jouables avant les dés.</span></li>
+    </ol>
+    <button class="modal-close btn btn-pumpkin w-full rounded-xl py-3 font-extrabold mt-5" data-target="modalRules">J'ai compris, j'ose entrer !</button>
+  </div>
+</div>
+
+<!-- Poids des actions -->
+<div id="modalWeights" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Poids des actions">
+  <div class="modal-box card-gothic w-full max-w-md p-6 relative">
+    <button class="modal-close absolute top-4 right-4 btn btn-ghost rounded-full w-9 h-9 font-bold" data-target="modalWeights" aria-label="Fermer">✕</button>
+    <p class="text-pumpkin tracking-[.25em] text-[11px] font-bold mb-1">LES FORCES OBSCURES</p>
+    <h2 class="font-title text-3xl text-bone mb-4">Poids des actions</h2>
+    <div id="weightsList" class="space-y-3 mb-4"></div>
+    <label class="flex items-center gap-2 text-sm text-bone/90 mb-4 cursor-pointer">
+      <input id="exactBounceChk" type="checkbox" checked class="w-4 h-4 accent-orange-500"> Rebond obligatoire sur la pièce 63
+    </label>
+    <button id="btnResetWeights" class="btn btn-ghost w-full rounded-xl py-3 font-bold">Réinitialiser les forces obscures</button>
+  </div>
+</div>
+
+<!-- Illustration manoir central (template SVG) -->
+<template id="manorArt">
+<svg viewBox="0 0 420 190" class="w-full max-w-md mx-auto" role="img" aria-label="Illustration du manoir hanté">
+  <ellipse cx="210" cy="185" rx="230" ry="26" fill="#0F0B18"/>
+  <rect x="0" y="150" width="420" height="40" fill="#0F0B18"/>
+  <!-- lune -->
+  <circle cx="330" cy="52" r="30" fill="#E8D5A3"/>
+  <circle cx="330" cy="52" r="42" fill="#E8D5A3" opacity=".12"/>
+  <circle cx="338" cy="44" r="6" fill="#C9B27E" opacity=".5"/>
+  <circle cx="322" cy="60" r="4" fill="#C9B27E" opacity=".5"/>
+  <!-- chauves-souris -->
+  <g fill="#0F0B18" class="bat-fly">
+    <path d="M120 42 q6 -8 12 0 q6 -8 12 0 q-6 4 -12 2 q-6 2 -12 -2z"/>
+    <path d="M170 26 q5 -7 10 0 q5 -7 10 0 q-5 4 -10 2 q-5 2 -10 -2z"/>
+    <path d="M250 34 q4 -6 8 0 q4 -6 8 0 q-4 3 -8 2 q-4 1 -8 -2z"/>
+  </g>
+  <!-- colline -->
+  <path d="M40 160 Q210 88 380 160 Z" fill="#141021"/>
+  <!-- corps manoir -->
+  <rect x="140" y="88" width="120" height="66" rx="3" fill="#0F0B18"/>
+  <path d="M132 90 L200 44 L268 90 Z" fill="#0F0B18"/>
+  <!-- tour -->
+  <rect x="252" y="60" width="34" height="94" rx="3" fill="#0F0B18"/>
+  <path d="M248 62 L269 30 L290 62 Z" fill="#0F0B18"/>
+  <line x1="269" y1="30" x2="269" y2="18" stroke="#0F0B18" stroke-width="2"/>
+  <path d="M269 18 L283 22 L269 27 Z" fill="#E5484D"/>
+  <!-- fenêtres orange avec lueur -->
+  <g>
+    <rect x="152" y="98" width="13" height="17" rx="2" fill="#F97316"/><rect x="152" y="98" width="13" height="17" rx="2" fill="#F97316" opacity=".5" filter="blur(2px)"/>
+    <rect x="178" y="98" width="13" height="17" rx="2" fill="#7a3c0c"/>
+    <rect x="204" y="98" width="13" height="17" rx="2" fill="#F97316"/>
+    <rect x="152" y="124" width="13" height="17" rx="2" fill="#7a3c0c"/>
+    <rect x="204" y="124" width="13" height="17" rx="2" fill="#F97316"/>
+    <rect x="261" y="72" width="11" height="14" rx="2" fill="#F97316"/>
+    <rect x="261" y="98" width="11" height="14" rx="2" fill="#7a3c0c"/>
+    <line x1="186" y1="98" x2="184" y2="106" stroke="#17121F" stroke-width="2.4"/>
+    <line x1="184" y1="102" x2="190" y2="100" stroke="#17121F" stroke-width="2.4"/>
+  </g>
+  <!-- porte + citrouille -->
+  <rect x="188" y="128" width="20" height="26" rx="9" fill="#241B33"/>
+  <circle cx="204" cy="141" r="1.4" fill="#F97316"/>
+  <g class="ghost-float">
+    <ellipse cx="310" cy="112" rx="14" ry="16" fill="#F3EFE7" opacity=".92"/>
+    <path d="M298 122 q6 8 12 0 q6 6 12 0 l0 6 q-12 6 -24 0z" fill="#F3EFE7" opacity=".92"/>
+    <circle cx="305" cy="108" r="2.2" fill="#17121F"/>
+    <circle cx="315" cy="108" r="2.2" fill="#17121F"/>
+    <path d="M305 115 q5 4 10 0" stroke="#17121F" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  </g>
+  <ellipse cx="160" cy="152" rx="11" ry="8" fill="#F97316"/>
+  <path d="M158 144 q2 -5 5 -6" stroke="#4A2A15" stroke-width="2" fill="none"/>
+  <path d="M154 149 l3 -1 M166 149 l3 -1 M155 153 l3 1 M165 153 l-3 1" stroke="#17121F" stroke-width="1.6"/>
+  <!-- clôture -->
+  <g stroke="#0F0B18" stroke-width="3">
+    <line x1="60" y1="150" x2="58" y2="164"/><line x1="86" y1="148" x2="86" y2="163"/>
+    <line x1="112" y1="151" x2="114" y2="165"/><line x1="336" y1="152" x2="334" y2="166"/>
+    <line x1="360" y1="150" x2="362" y2="164"/><line x1="52" y1="156" x2="122" y2="153"/>
+    <line x1="328" y1="158" x2="370" y2="155"/>
+  </g>
+  <!-- brouillard -->
+  <ellipse cx="120" cy="168" rx="90" ry="10" fill="#A99FC1" opacity=".08"/>
+  <ellipse cx="300" cy="172" rx="110" ry="11" fill="#7FE7A4" opacity=".06"/>
+</svg>
+</template>
+<script>
+/* ==================== DONNÉES ==================== */
+const CREATURES = [
+  { key:'fantome',   name:'Fantôme',    emoji:'👻', glow:'#7FE7A4', bgSoft:'#1F3A2E' },
+  { key:'vampire',   name:'Vampire',    emoji:'🧛', glow:'#E5484D', bgSoft:'#4A1F24' },
+  { key:'citrouille',name:'Citrouille', emoji:'🎃', glow:'#F97316', bgSoft:'#4A2A15' },
+  { key:'squelette', name:'Squelette',  emoji:'💀', glow:'#E8D5A3', bgSoft:'#3A3220' },
+  { key:'zombie',    name:'Zombie',     emoji:'🧟', glow:'#8BC34A', bgSoft:'#26331B' },
+  { key:'chat',      name:'Chat noir',  emoji:'🐈‍⬛',glow:'#A78BFA', bgSoft:'#2E2450' }
+];
+const ACTIONS = {
+  replay:                 { name:"Frisson d'Adrénaline", icon:'👻', theme:'green',  weight:26, player:true,  chance:true,  desc:"Une force invisible te traverse : relance les dés immédiatement !" },
+  double_roll:            { name:'La Peur au Ventre',    icon:'💨', theme:'green',  weight:20, player:true,  chance:true,  desc:"Quelque chose te poursuit : fuis une seconde fois du montant du dernier lancer !" },
+  back_2:                 { name:'Parquet Pourri',       icon:'🪵', theme:'red',    weight:18, player:false, chance:false, desc:'Le parquet cède sous tes pas : recule de 2 pièces.' },
+  swap_ahead:             { name:'Corps Poltergeist',    icon:'🔀', theme:'purple', weight:16, player:true,  chance:true,  desc:'Un esprit farceur échange ta place avec le joueur devant toi !' },
+  leader_penalty_or_boost:{ name:'Le Bal des Fantômes',  icon:'⚖️', theme:'blue',   weight:18, player:true,  chance:true,  desc:'Les esprits dansent en cercle : le premier recule, le dernier avance !' },
+  draw_chance:            { name:'Bougie Magique',       icon:'🕯️', theme:'yellow', weight:24, player:true,  chance:false, desc:'Allume la bougie noire : un esprit te souffle une prédiction…' },
+  bridge_boost:           { name:'Passage Secret',       icon:'🚪', theme:'blue',   weight:14, player:true,  chance:true,  desc:'Une porte dérobée s\u2019ouvre dans la bibliothèque : file 6 pièces plus loin !' },
+  skip_turn:              { name:'Coincé sous les Draps',icon:'🕸️', theme:'yellow', weight:12, player:false, chance:false, desc:'Un fantôme s\u2019est endormi sur toi. Impossible de bouger : passe un tour.' },
+  labyrinth_back:         { name:'Couloir Sans Fin',     icon:'🌀', theme:'purple', weight:12, player:false, chance:false, desc:'Les couloirs du manoir tournent en rond : recule de 4 pièces.' },
+  forward_3:              { name:'Courant Spectral',     icon:'🌬️', theme:'green',  weight:18, player:true,  chance:true,  desc:'Un courant d\u2019air glacial te pousse vers l\u2019avant : +3 pièces !' },
+  return_start:           { name:'Le Faucheur',          icon:'☠️', theme:'red',    weight:7,  player:false, chance:false, desc:'Tu croises LE FAUCHEUR dans l\u2019escalier : recule de 8 pièces !' }
+};
+const DEFAULT_WEIGHTS = Object.fromEntries(Object.keys(ACTIONS).map(k => [k, ACTIONS[k].weight]));
+const THEMES = {
+  default:['#2E2440','#F3EFE7'], green:['#1F3A2E','#9FE7B8'], blue:['#22304A','#A8C6F0'],
+  yellow:['#4A3315','#FFD98A'], purple:['#3A2A52','#D0BFFF'], red:['#4A1F24','#FFA3A8'], gold:['#E8B84B','#2A1A05']
+};
+const FLAVORS = [
+  'Les planches craquent sous tes pas…',
+  'Un courant glacé descend du grenier…',
+  'Les portraits te suivent des yeux…',
+  'Quelque chose chuchote ton nom…',
+  'La poussière danse dans la lumière de la lune…',
+  'Les horloges du manoir ont toutes des heures différentes…'
+];
+const PIP_MAP = { 1:[4], 2:[0,8], 3:[0,4,8], 4:[0,2,6,8], 5:[0,2,4,6,8], 6:[0,2,3,5,6,8] };
+
+/* ==================== ÉTAT ==================== */
+let gameState = null;
+let lobbyConfig = { count:4, players:[], coverage:45, cardDrop:35, diceCount:2 };
+let pendingChanceResolve = null;
+let lastRollValue = null;
+let currentWeights = { ...DEFAULT_WEIGHTS };
+
+const $ = id => document.getElementById(id);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const rnd = n => Math.floor(Math.random() * n);
+const clampPos = p => Math.max(1, Math.min(63, p));
+
+function weightedPick() {
+  const entries = Object.entries(currentWeights);
+  const total = entries.reduce((s, [, w]) => s + w, 0);
+  let r = Math.random() * total;
+  for (const [id, w] of entries) { r -= w; if (r <= 0) return id; }
+  return entries[entries.length - 1][0];
+}
+
+/* ==================== SPIRALE ==================== */
+function buildPath() {
+  const path = [];
+  for (let r = 7; r >= 0; r--) path.push([r, 0]);   // 1-8
+  for (let c = 1; c <= 10; c++) path.push([0, c]);  // 9-18
+  for (let r = 1; r <= 7; r++) path.push([r, 10]);  // 19-25
+  for (let c = 9; c >= 1; c--) path.push([7, c]);   // 26-34
+  for (let r = 6; r >= 1; r--) path.push([r, 1]);   // 35-40
+  for (let c = 2; c <= 9; c++) path.push([1, c]);   // 41-48
+  for (let r = 2; r <= 6; r++) path.push([r, 9]);   // 49-53
+  for (let c = 8; c >= 2; c--) path.push([6, c]);   // 54-60
+  for (let r = 5; r >= 3; r--) path.push([r, 2]);   // 61-63
+  return path;
+}
+
+/* ==================== VESTIBULE ==================== */
+const lobbyCard = document.querySelector('#screen-lobby .card-gothic');
+
+function buildLobbyPlayers() {
+  const prev = lobbyConfig.players;
+  lobbyConfig.players = [];
+  for (let i = 0; i < lobbyConfig.count; i++) {
+    const taken = lobbyConfig.players.map(p => p.creature);
+    let idx = (prev[i] && !taken.includes(prev[i].creature)) ? CREATURES.findIndex(c => c.key === prev[i].creature) : -1;
+    if (idx < 0) idx = CREATURES.findIndex(c => !taken.includes(c.key));
+    const old = prev[i];
+    lobbyConfig.players.push({
+      creature: CREATURES[idx].key,
+      name: old && old.creature === CREATURES[idx].key ? old.name : CREATURES[idx].name
+    });
+  }
+  renderLobbyRows();
+}
+
+function renderLobbyRows() {
+  const wrap = $('playerRows');
+  wrap.innerHTML = '';
+  lobbyConfig.players.forEach((p, i) => {
+    const cr = CREATURES.find(c => c.key === p.creature);
+    const takenBy = lobbyConfig.players.filter((q, j) => j !== i && q.creature === p.creature).length > 0;
+    const row = document.createElement('div');
+    row.className = 'bg-velvet border border-mist rounded-2xl p-3';
+    row.innerHTML = `
+      <div class="flex items-center gap-3">
+        <span class="w-12 h-12 rounded-full flex items-center justify-center text-2xl shrink-0" style="background:${cr.bgSoft};box-shadow:0 0 12px ${cr.glow}55">${cr.emoji}</span>
+        <div class="flex-1 min-w-0">
+          <label class="text-[10px] text-lavender font-bold">AVENTURIER ${i + 1}</label>
+          <input type="text" maxlength="20" value="${p.name.replace(/"/g, '&quot;')}" data-name="${i}"
+            class="w-full bg-night border border-mist rounded-lg px-3 py-1.5 text-sm text-bone outline-none focus:border-pumpkin">
+        </div>
+      </div>
+      <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5 mt-2.5">
+        ${CREATURES.map(c => {
+          const isMine = c.key === p.creature;
+          const isTaken = lobbyConfig.players.some((q, j) => j !== i && q.creature === c.key);
+          return `<button data-creature="${c.key}" data-row="${i}" ${isTaken ? 'disabled' : ''}
+            title="${isTaken ? 'Déjà prise' : c.name}"
+            class="btn rounded-lg px-1 py-1.5 text-[10px] font-bold flex flex-col items-center gap-0.5 ${isMine ? '' : 'btn-ghost'} ${isTaken ? 'opacity-35 cursor-not-allowed' : ''}"
+            ${isMine ? `style="background:${c.bgSoft};border:2px solid #F97316"` : ''}>
+            <span class="text-lg">${c.emoji}</span><span>${c.name}</span></button>`;
+        }).join('')}
+      </div>`;
+    wrap.appendChild(row);
+  });
+  wrap.querySelectorAll('[data-name]').forEach(inp => inp.addEventListener('input', e => {
+    lobbyConfig.players[+e.target.dataset.name].name = e.target.value;
+  }));
+  wrap.querySelectorAll('[data-creature]').forEach(b => b.addEventListener('click', () => {
+    lobbyConfig.players[+b.dataset.row].creature = b.dataset.creature;
+    const pl = lobbyConfig.players[+b.dataset.row];
+    const c = CREATURES.find(x => x.key === b.dataset.creature);
+    if (!pl.name.trim() || CREATURES.some(x => x.name === pl.name.trim())) pl.name = c.name;
+    renderLobbyRows();
+  }));
+}
+
+function bindLobby() {
+  $('countButtons').querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    lobbyConfig.count = +b.dataset.count;
+    $('countButtons').querySelectorAll('button').forEach(x => {
+      const on = x === b;
+      x.className = `btn rounded-xl font-extrabold text-lg py-3 ${on ? 'btn-pumpkin' : 'btn-ghost'}`;
+    });
+    $('playerCountLabel').textContent = `${lobbyConfig.count} aventurier${lobbyConfig.count > 1 ? 's' : ''}`;
+    buildLobbyPlayers();
+  }));
+  $('resetNames').addEventListener('click', () => {
+    lobbyConfig.players.forEach(p => p.name = CREATURES.find(c => c.key === p.creature).name);
+    renderLobbyRows();
+  });
+  $('coverage').addEventListener('input', e => { lobbyConfig.coverage = +e.target.value; $('coverageVal').textContent = lobbyConfig.coverage + ' %'; });
+  $('cardDrop').addEventListener('input', e => { lobbyConfig.cardDrop = +e.target.value; $('cardDropVal').textContent = lobbyConfig.cardDrop + ' %'; });
+  $('dice1').addEventListener('click', () => setDice(1));
+  $('dice2').addEventListener('click', () => setDice(2));
+  $('enterManor').addEventListener('click', enterManor);
+}
+function setDice(n) {
+  lobbyConfig.diceCount = n;
+  $('dice1').className = `btn rounded-xl px-4 py-2 text-xs font-bold ${n === 1 ? 'btn-pumpkin' : 'btn-ghost'}`;
+  $('dice2').className = `btn rounded-xl px-4 py-2 text-xs font-bold ${n === 2 ? 'btn-pumpkin' : 'btn-ghost'}`;
+}
+
+function openLobbyModal() {
+  $('lobbyModalContent').appendChild(lobbyCard);
+  openModal('modalLobby');
+}
+function enterManor() {
+  closeModal('modalLobby');
+  $('screen-lobby').appendChild(lobbyCard); // remet la carte à sa place d'origine
+  startGame();
+}
+</script>
+<script>
+/* ==================== PLATEAU ==================== */
+function renderBoard() {
+  const board = $('board');
+  board.innerHTML = '';
+  const path = buildPath();
+  // Décor central
+  const decor = document.createElement('div');
+  decor.style.gridArea = '3 / 3 / 6 / 9';
+  decor.className = 'flex flex-col items-center justify-center pointer-events-none z-0';
+  decor.innerHTML = `<div class="w-full max-w-[300px]">${$('manorArt').innerHTML}</div>`;
+  board.appendChild(decor);
+  // Cases
+  for (let n = 1; n <= 63; n++) {
+    const [r, c] = path[n - 1];
+    const a = gameState.board[n - 1].actionId ? ACTIONS[gameState.board[n - 1].actionId] : null;
+    const cell = document.createElement('div');
+    cell.className = 'cellx' + (n === 1 ? ' porch' : '') + (n === 63 ? ' exit' : '');
+    cell.style.gridRow = r + 1;
+    cell.style.gridColumn = c + 1;
+    if (a) {
+      const [bg, fg] = THEMES[a.theme];
+      cell.style.background = bg;
+      cell.dataset.tip = `Pièce n°${n} — ${a.name} : ${a.desc}`;
+      cell.innerHTML = `<span class="cell-icon">${a.icon}</span><span class="cell-name" style="color:${fg}">${a.name.slice(0, 18)}</span><span class="num" style="color:${fg}">${n}</span>`;
+    } else if (n === 1) {
+      cell.dataset.tip = 'Pièce n°1 — PORCHE : le point de départ de tous les pions.';
+      cell.innerHTML = `<span class="cell-icon">🕯️</span><span class="cell-name text-pumpkin">PORCHE</span><span class="num">1</span>`;
+    } else if (n === 63) {
+      cell.dataset.tip = 'Pièce n°63 — SORTIE : atteins-la PILE pour t\u2019échapper !';
+      cell.innerHTML = `<span class="cell-icon">🚪</span><span class="cell-name" style="color:#2A1A05">SORTIE</span><span class="num">63</span><span class="candle">🕯️</span>`;
+    } else {
+      cell.dataset.tip = `Pièce n°${n} — une pièce calme… pour l\u2019instant.`;
+      cell.innerHTML = `<span class="num">${n}</span>`;
+    }
+    cell.dataset.num = n;
+    const pr = document.createElement('div');
+    pr.className = 'pawns-row';
+    cell.appendChild(pr);
+    board.appendChild(cell);
+  }
+  requestAnimationFrame(drawConnectors);
+}
+
+function drawConnectors() {
+  document.querySelectorAll('.connector').forEach(e => e.remove());
+  const board = $('board');
+  if (!board.children.length) return;
+  const cells = [...board.querySelectorAll('.cellx')];
+  for (let i = 0; i < cells.length - 1; i++) {
+    const a = cells[i].getBoundingClientRect(), b = cells[i + 1].getBoundingClientRect(), br = board.getBoundingClientRect();
+    const ax = a.left + a.width / 2 - br.left, ay = a.top + a.height / 2 - br.top;
+    const bx = b.left + b.width / 2 - br.left, by = b.top + b.height / 2 - br.top;
+    const d = document.createElement('div');
+    d.className = 'connector';
+    const mx = (ax + bx) / 2, my = (ay + by) / 2;
+    const horizontal = Math.abs(bx - ax) > Math.abs(by - ay);
+    d.style.width = horizontal ? '10px' : '5px';
+    d.style.height = horizontal ? '5px' : '10px';
+    d.style.left = (mx - (horizontal ? 5 : 2.5)) + 'px';
+    d.style.top = (my - (horizontal ? 2.5 : 5)) + 'px';
+    board.appendChild(d);
+  }
+}
+new ResizeObserver(() => drawConnectors()).observe(document.body);
+
+/* ==================== PIONS ==================== */
+function renderPawns() {
+  document.querySelectorAll('.pawns-row').forEach(e => e.innerHTML = '');
+  gameState.players.forEach((p, idx) => {
+    const row = document.querySelector(`.cellx[data-num="${p.position}"] .pawns-row`);
+    if (!row) return;
+    const many = row.children.length >= 2;
+    const el = document.createElement('span');
+    el.className = 'pawn' + (many ? ' small' : '') + (idx === gameState.turnIndex ? ' active-pawn' : '');
+    el.style.background = p.bgSoft;
+    el.style.boxShadow = `0 0 10px ${p.glow}66, 0 3px 8px rgba(0,0,0,.5)`;
+    el.dataset.tip = `${p.name} · ${p.creatureName}`;
+    el.textContent = p.emoji;
+    row.appendChild(el);
+  });
+  document.querySelectorAll('.cellx').forEach(c => {
+    const row = c.querySelector('.pawns-row');
+    if (row) row.classList.toggle('small', row.children.length >= 3);
+  });
+}
+
+/* ==================== TOOLTIP ==================== */
+const tooltip = $('tooltip');
+document.addEventListener('mouseover', e => {
+  const t = e.target.closest('[data-tip]');
+  if (!t) { tooltip.style.display = 'none'; return; }
+  tooltip.textContent = t.dataset.tip;
+  tooltip.style.display = 'block';
+  const move = ev => {
+    const x = Math.min(ev.clientX + 14, window.innerWidth - tooltip.offsetWidth - 10);
+    const y = Math.min(ev.clientY + 16, window.innerHeight - tooltip.offsetHeight - 10);
+    tooltip.style.left = x + 'px'; tooltip.style.top = y + 'px';
+  };
+  move(e);
+  t.onmousemove = move;
+  t.onmouseleave = () => { tooltip.style.display = 'none'; t.onmousemove = null; };
+});
+
+/* ==================== JOURNAL / BANNIÈRE / RÉSIDENTS ==================== */
+function logEvent(txt) {
+  const div = document.createElement('p');
+  div.className = 'text-lavender leading-snug border-l-2 border-mist pl-2';
+  div.innerHTML = `<span class="text-pumpkin font-bold">Nuit ${gameState.round}</span> — ${txt}`;
+  $('log').prepend(div);
+}
+function showBanner(icon, title, text) {
+  $('bannerTitle').textContent = `${icon} ${title}`;
+  $('bannerText').textContent = text;
+  $('eventBanner').classList.remove('hidden');
+}
+function renderResidents() {
+  $('residents').innerHTML = gameState.players.map((p, i) => `
+    <div class="flex items-center gap-2 rounded-xl px-2.5 py-2 ${i === gameState.turnIndex ? 'bg-pumpkin/15 border border-pumpkin/50' : 'bg-velvet/60 border border-mist/50'}">
+      <span class="w-8 h-8 rounded-full flex items-center justify-center text-lg shrink-0" style="background:${p.bgSoft}">${p.emoji}</span>
+      <span class="font-bold text-sm text-bone truncate flex-1">${p.name}</span>
+      ${p.skipTurns > 0 ? '<span class="text-[10px] font-bold text-blood bg-blood/10 border border-blood/40 rounded-full px-2 py-0.5">Passe son tour</span>' : ''}
+      <span class="text-[11px] text-lavender whitespace-nowrap">Pièce ${p.position}</span>
+      <span class="text-xs">${p.hand.map(id => ACTIONS[id].icon).join('')}</span>
+    </div>`).join('');
+}
+function renderHand() {
+  const p = gameState.players[gameState.turnIndex];
+  $('handBadge').textContent = `${p.hand.length}/3`;
+  if (!p.hand.length) {
+    $('handCards').innerHTML = '<p class="text-[11px] text-lavender italic">Aucune carte en main… les esprits dorment.</p>';
+    return;
+  }
+  $('handCards').innerHTML = p.hand.map((id, i) => {
+    const a = ACTIONS[id];
+    return `<div class="spell-card deal-in p-2.5 flex items-center gap-2">
+      <span class="w-8 h-8 rounded-lg flex items-center justify-center text-base shrink-0" style="background:${THEMES[a.theme][0]}">${a.icon}</span>
+      <div class="flex-1 min-w-0">
+        <p class="text-xs font-extrabold text-bone truncate">${a.name}</p>
+        <p class="text-[10px] text-lavender leading-tight">${a.desc}</p>
+      </div>
+      <button data-play="${i}" class="btn btn-ghost rounded-lg px-2.5 py-1.5 text-[10px] font-bold text-purple-300 shrink-0" style="color:#D0BFFF">Jouer</button>
+    </div>`;
+  }).join('');
+  $('handCards').querySelectorAll('[data-play]').forEach(b => b.addEventListener('click', () => playCard(+b.dataset.play)));
+}
+
+/* ==================== DÉS ==================== */
+function renderDice(vals, shaking) {
+  const n = gameState.config.diceCount;
+  $('diceRow').innerHTML = Array.from({ length: n }, (_, i) => {
+    const v = vals ? vals[i] : (i === 0 ? 6 : 4);
+    const pips = PIP_MAP[v].map(p => `<span class="pip" style="grid-area:${Math.floor(p / 3) + 1}/${p % 3 + 1}"></span>`).join('');
+    return `<div class="die ${shaking ? 'dice-shake' : ''}" style="transform:rotate(${i === 0 ? -6 : 6}deg)"><div class="pips">${pips}</div></div>`;
+  }).join('');
+}
+
+/* ==================== MOTEUR ==================== */
+function startGame() {
+  const board = [{ number: 1, actionId: null }];
+  for (let n = 2; n <= 62; n++) board.push({ number: n, actionId: Math.random() * 100 < lobbyConfig.coverage ? weightedPick() : null });
+  board.push({ number: 63, actionId: null });
+  const pool = Object.keys(ACTIONS).filter(k => ACTIONS[k].player);
+  gameState = {
+    board, turnIndex: 0, round: 1, maxCell: 63, busy: false,
+    players: lobbyConfig.players.map((p, i) => {
+      const c = CREATURES.find(x => x.key === p.creature);
+      return { id: i, name: (p.name.trim() || c.name).slice(0, 20), creature: c.key, creatureName: c.name,
+        emoji: c.emoji, color: c.glow, bgSoft: c.bgSoft, position: 1, skipTurns: 0,
+        hand: [pool[rnd(pool.length)]] };
+    }),
+    config: { coverage: lobbyConfig.coverage, cardDropProb: lobbyConfig.cardDrop,
+      diceCount: lobbyConfig.diceCount, exactBounce: $('exactBounceChk').checked, weights: { ...currentWeights } }
+  };
+  $('boardMeta').textContent = `Manoir maudit · ${gameState.config.diceCount} dé${gameState.config.diceCount > 1 ? 's' : ''} · 63 pièces`;
+  $('log').innerHTML = '';
+  $('eventBanner').classList.add('hidden');
+  $('diceTotal').textContent = '—';
+  renderBoard(); renderPawns(); renderResidents(); renderHand();
+  renderDice(null, false); updateTurnUI();
+  $('screen-lobby').classList.add('hidden-fade');
+  $('screen-game').classList.remove('hidden-fade');
+  window.scrollTo({ top: 0 });
+  logEvent(`${gameState.players[0].name} ouvre la marche. Que la nuit commence…`);
+}
+
+function updateTurnUI() {
+  const p = gameState.players[gameState.turnIndex];
+  $('roundBadgeTop').textContent = `Nuit ${gameState.round}`;
+  $('roundBadgePanel').textContent = `Nuit ${gameState.round}`;
+  $('turnTitle').textContent = `C'est à toi, ${p.name} !`;
+  $('turnFlavor').textContent = FLAVORS[rnd(FLAVORS.length)];
+  $('diceLegend').textContent = `Dernier lancer de ${p.name}`;
+  $('btnRoll').disabled = gameState.busy;
+  renderPawns(); renderResidents(); renderHand();
+}
+
+function nextTurn() {
+  gameState.turnIndex = (gameState.turnIndex + 1) % gameState.players.length;
+  if (gameState.turnIndex === 0) gameState.round++;
+  updateTurnUI();
+}
+
+async function onRoll() {
+  if (gameState.busy) return;
+  gameState.busy = true;
+  gameState.over = false;
+  $('btnRoll').disabled = true;
+  $('eventBanner').classList.add('hidden');
+  const p = gameState.players[gameState.turnIndex];
+  const n = gameState.config.diceCount;
+  renderDice([6, 4], true);
+  await sleep(650);
+  const vals = Array.from({ length: n }, () => 1 + rnd(6));
+  lastRollValue = vals.reduce((a, b) => a + b, 0);
+  renderDice(vals, false);
+  $('diceTotal').textContent = lastRollValue;
+  logEvent(`${p.name} lance ${n === 2 ? 'les dés' : 'le dé'} : ${lastRollValue}.`);
+  await sleep(350);
+  await movePlayer(p, lastRollValue);
+  if (!gameState.over) { // pas de victoire → fin de tour
+    await endTurn(p);
+    gameState.busy = false;
+    nextTurn();
+  } else gameState.busy = false;
+}
+
+async function movePlayer(p, steps) {
+  let dir = 1, pos = p.position;
+  for (let s = 0; s < Math.abs(steps); s++) {
+    if (steps > 0) {
+      if (gameState.config.exactBounce) { if (pos === 63) dir = -1; }
+      else if (pos >= 63) break;
+      pos += dir;
+    } else pos = Math.max(1, pos - 1);
+    p.position = pos;
+    renderPawns();
+    const el = document.querySelector(`.cellx[data-num="${pos}"] .pawn`);
+    if (el) { el.classList.add('hop'); setTimeout(() => el.classList.remove('hop'), 170); }
+    await sleep(180);
+  }
+  await sleep(150);
+  if (p.position === 63) { await victory(p); return; }
+  const actionId = gameState.board[p.position - 1].actionId;
+  if (actionId) await applyAction(actionId, p, 'case');
+}
+
+async function applyAction(actionId, p, source, depth = 0) {
+  const a = ACTIONS[actionId];
+  const pos0 = p.position;
+  const win = await (async () => {
+    switch (actionId) {
+      case 'replay': {
+        showBanner(a.icon, a.name, `${p.name}, une force invisible te traverse… Relance !`);
+        logEvent(`${p.name} est traversé par un Frisson d'Adrénaline : relance immédiate !`);
+        await sleep(700);
+        const n = gameState.config.diceCount;
+        renderDice([6, 4], true); await sleep(650);
+        const vals = Array.from({ length: n }, () => 1 + rnd(6));
+        lastRollValue = vals.reduce((x, y) => x + y, 0);
+        renderDice(vals, false); $('diceTotal').textContent = lastRollValue;
+        logEvent(`Relance de ${p.name} : ${lastRollValue}.`);
+        await sleep(300);
+        await movePlayer(p, lastRollValue);
+        return p.position === 63;
+      }
+      case 'double_roll': {
+        const m = source === 'card' ? 4 : Math.max(2, lastRollValue || 4);
+        showBanner(a.icon, a.name, `${p.name} fuit une seconde fois : +${m} pièces !`);
+        logEvent(`${p.name} a la Peur au Ventre : +${m} pièces !`);
+        await sleep(500); await movePlayer(p, m); return p.position === 63;
+      }
+      case 'back_2': case 'labyrinth_back': case 'return_start': {
+        const m = actionId === 'back_2' ? 2 : actionId === 'labyrinth_back' ? 4 : 8;
+        showBanner(a.icon, a.name, `${a.desc} (${p.name} : pièce ${pos0} → pièce ${clampPos(pos0 - m)})`);
+        logEvent(`${p.name} subit « ${a.name} » : −${m} pièces !`);
+        await sleep(500); await movePlayer(p, -m); return false;
+      }
+      case 'bridge_boost': case 'forward_3': {
+        const m = actionId === 'bridge_boost' ? 6 : 3;
+        showBanner(a.icon, a.name, a.desc);
+        logEvent(`${p.name} file en avant grâce à « ${a.name} » : +${m} pièces !`);
+        await sleep(500); await movePlayer(p, m); return p.position === 63;
+      }
+      case 'swap_ahead': {
+        const others = gameState.players.filter(q => q !== p && q.position > p.position).sort((x, y) => x.position - y.position);
+        if (!others.length) { showBanner(a.icon, a.name, `Aucun joueur devant ${p.name}… l'esprit repart vexé.`); logEvent(`L'esprit farceur n'a trouvé personne devant ${p.name}.`); return false; }
+        const t = others[0];
+        [p.position, t.position] = [t.position, p.position];
+        renderPawns(); renderResidents();
+        showBanner(a.icon, a.name, `${p.name} échange sa place avec ${t.name} (pièce ${p.position}) !`);
+        logEvent(`Corps Poltergeist : ${p.name} ⇄ ${t.name} ! ${p.name} arrive en pièce ${p.position}.`);
+        await sleep(600);
+        const act = gameState.board[p.position - 1].actionId;
+        if (act && depth < 5) await applyAction(act, p, 'case', depth + 1);
+        return p.position === 63;
+      }
+      case 'leader_penalty_or_boost': {
+        const maxPos = Math.max(...gameState.players.map(q => q.position));
+        const ahead = p.position >= maxPos;
+        const m = gameState.players.length;
+        if (ahead) {
+          showBanner(a.icon, a.name, `${p.name} mène la danse… les esprits le font reculer de ${m} !`);
+          logEvent(`Le Bal des Fantômes : ${p.name} (en tête) recule de ${m} pièces.`);
+          await sleep(500); await movePlayer(p, -m);
+        } else {
+          showBanner(a.icon, a.name, `${p.name} traîne… les esprits le portent de ${m} pièces en avant !`);
+          logEvent(`Le Bal des Fantômes : ${p.name} (derrière) avance de ${m} pièces.`);
+          await sleep(500); await movePlayer(p, m);
+          return p.position === 63;
+        }
+        return false;
+      }
+      case 'draw_chance': {
+        showBanner(a.icon, a.name, `${p.name} allume la bougie noire…`);
+        logEvent(`${p.name} allume la Bougie Magique : le spiritisme commence…`);
+        await sleep(500);
+        await openChance(p);
+        return false;
+      }
+      case 'skip_turn': {
+        p.skipTurns += 1;
+        showBanner(a.icon, a.name, a.desc);
+        logEvent(`${p.name} est Coincé sous les Draps : il passera son prochain tour.`);
+        await sleep(500);
+        return false;
+      }
+    }
+    return false;
+  })();
+  if (win) await victory(p);
+}
+
+async function openChance(p) {
+  const pool = Object.keys(ACTIONS).filter(k => ACTIONS[k].chance && k !== 'draw_chance');
+  const id = pool[rnd(pool.length)];
+  const a = ACTIONS[id];
+  const [bg] = THEMES[a.theme];
+  $('chanceCardBox').innerHTML = `
+    <div class="rounded-2xl p-4 border" style="background:${bg};border-color:${a.theme === 'yellow' ? '#FFD98A' : THEMES[a.theme][1]}55">
+      <div class="flex items-center gap-3 text-left">
+        <span class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0" style="background:${THEMES[a.theme][0]}">${a.icon}</span>
+        <div><p class="font-extrabold text-bone">${a.name}</p>
+        <p class="text-[11px] text-lavender">Carte Chance</p></div>
+      </div>
+      <p class="text-sm text-bone/90 mt-3 text-left">${a.desc}</p>
+    </div>`;
+  $('btnApplyChance').disabled = false;
+  openModal('modalChance');
+  await new Promise(res => { pendingChanceResolve = res; });
+  closeModal('modalChance');
+  logEvent(`La prédiction se réalise pour ${p.name} : « ${a.name} ».`);
+  await applyAction(id, p, 'chance');
+  renderResidents(); renderPawns();
+}
+</script>
+<script>
+/* ==================== FIN DE TOUR / CARTES EN MAIN ==================== */
+async function endTurn(p) {
+  if (Math.random() * 100 < gameState.config.cardDropProb) {
+    const pool = Object.keys(ACTIONS).filter(k => ACTIONS[k].player);
+    if (p.hand.length < 3) {
+      const id = pool[rnd(pool.length)];
+      p.hand.push(id);
+      renderHand();
+      showBanner('🎴', 'Carte Sortilège !', `${p.name} reçoit « ${ACTIONS[id].name} » en main.`);
+      logEvent(`Un esprit glisse la carte « ${ACTIONS[id].name} » dans la main de ${p.name}.`);
+      await sleep(600);
+    } else {
+      logEvent(`La main de ${p.name} est pleine : la carte s'envole par la fenêtre…`);
+    }
+  }
+}
+
+async function playCard(idx) {
+  if (gameState.busy) return;
+  const p = gameState.players[gameState.turnIndex];
+  const id = p.hand[idx];
+  if (!id) return;
+  gameState.busy = true;
+  $('btnRoll').disabled = true;
+  $('eventBanner').classList.add('hidden');
+  p.hand.splice(idx, 1);
+  renderHand();
+  logEvent(`${p.name} joue la carte « ${ACTIONS[id].name} ».`);
+  gameState.over = false;
+  if (id === 'replay') {
+    // rejouer = lancer les dés immédiatement
+    gameState.busy = false;
+    await onRoll();
+    return;
+  }
+  await applyAction(id, p, 'card');
+  if (!gameState.over) {
+    await endTurn(p);
+    gameState.busy = false;
+    nextTurn();
+  } else gameState.busy = false;
+  $('btnRoll').disabled = false;
+}
+
+/* ==================== VICTOIRE ==================== */
+async function victory(p) {
+  if (gameState.over) return; // déjà déclenchée (chaînage) — idempotent
+  gameState.over = true;
+  logEvent(`🚪 ${p.name} atteint PILE la pièce 63 et s'échappe du Manoir Grimm !`);
+  $('winTitle').textContent = `${p.name} s'échappe du Manoir Grimm !`;
+  await sleep(500);
+  openModal('modalWin');
+}
+
+/* ==================== MODALES GÉNÉRIQUES ==================== */
+function openModal(id) { $(id).classList.add('open'); }
+function closeModal(id) {
+  $(id).classList.remove('open');
+  if (id === 'modalChance' && pendingChanceResolve) { const r = pendingChanceResolve; pendingChanceResolve = null; r(); }
+}
+document.querySelectorAll('.modal-close').forEach(b => b.addEventListener('click', () => closeModal(b.dataset.target)));
+document.querySelectorAll('.modal-backdrop').forEach(m => m.addEventListener('click', e => {
+  if (e.target === m && m.id !== 'modalChance' && m.id !== 'modalWin') closeModal(m.id);
+}));
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.modal-backdrop.open').forEach(m => { if (m.id !== 'modalChance' && m.id !== 'modalWin') closeModal(m.id); });
+});
+
+/* ==================== POIDS DES ACTIONS ==================== */
+function renderWeights() {
+  const w = currentWeights;
+  $('weightsList').innerHTML = Object.keys(ACTIONS).map(k => {
+    const a = ACTIONS[k];
+    return `<div class="flex items-center gap-2.5">
+      <span class="w-8 h-8 rounded-lg flex items-center justify-center text-base shrink-0" style="background:${THEMES[a.theme][0]}">${a.icon}</span>
+      <div class="flex-1 min-w-0">
+        <div class="flex justify-between text-[11px] mb-0.5"><span class="font-bold text-bone truncate">${a.name}</span><span class="text-pumpkin font-bold" id="wv-${k}">${w[k]}</span></div>
+        <input type="range" min="1" max="100" value="${w[k]}" data-weight="${k}" class="w-full">
+      </div></div>`;
+  }).join('');
+  $('weightsList').querySelectorAll('[data-weight]').forEach(s => s.addEventListener('input', () => {
+    const k = s.dataset.weight, v = +s.value;
+    $('wv-' + k).textContent = v;
+    currentWeights[k] = v;
+    if (gameState) gameState.config.weights[k] = v;
+  }));
+}
+$('btnResetWeights').addEventListener('click', () => {
+  const defaults = Object.fromEntries(Object.keys(ACTIONS).map(k => [k, ACTIONS[k].weight]));
+  currentWeights = { ...defaults };
+  if (gameState) gameState.config.weights = { ...defaults };
+  renderWeights();
+});
+$('exactBounceChk').addEventListener('change', e => { if (gameState) gameState.config.exactBounce = e.target.checked; });
+
+/* ==================== BOUTONS BARRE + VICTOIRE + CHANCE ==================== */
+$('btnPlayers').addEventListener('click', openLobbyModal);
+$('btnRules').addEventListener('click', () => openModal('modalRules'));
+$('btnRulesM').addEventListener('click', () => openModal('modalRules'));
+$('btnWeights').addEventListener('click', () => { renderWeights(); openModal('modalWeights'); });
+$('btnShuffle').addEventListener('click', () => {
+  if (!gameState) return;
+  const names = lobbyConfig.players;
+  startGame();
+  logEvent('Le manoir se réorganise… les pièces ont changé de place !');
+  showBanner('🌀', 'Manoir mélangé', 'Les forces obscures ont redistribué les pièges. Nouvelle nuit !');
+});
+$('btnWinNew').addEventListener('click', () => { closeModal('modalWin'); openLobbyModal(); });
+$('btnWinReplay').addEventListener('click', () => { closeModal('modalWin'); startGame(); });
+$('btnRoll').addEventListener('click', onRoll);
+$('btnApplyChance').addEventListener('click', () => { if (pendingChanceResolve) { $('btnApplyChance').disabled = true; closeModal('modalChance'); } });
+
+/* ==================== INIT ==================== */
+buildLobbyPlayers();
+bindLobby();
+setDice(2);
+renderWeights();
+</script>
+</body>
+</html>
