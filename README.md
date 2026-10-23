@@ -3,9 +3,7 @@
 > Un jeu de l'oie version manoir hanté, **sinistre à première vue, adorable à la seconde**.
 > Un seul fichier HTML, 100 % autonome, jouable hors ligne. Fuyez avant l'aube !
 
-![Aperçu du jeu](capture-3-plateau.png)
-
----
+![Aperçu du jeu](Plateau-manoir-plein-ecran.png)
 
 ## 🕯️ Le concept
 
@@ -13,8 +11,6 @@ Inspiré du classique **Jeu de l'Oie**, *La Maison Hantée* vous plonge dans le 
 63 pièces disposées en spirale, des esprits farceurs, des pièces piégées et un seul objectif —
 atteindre **pile** la pièce 63 (la SORTIE) pour vous échapper avant que l'aube ne se lève.
 Dépassez la case 63 ? Vous **rebondissez en arrière**… le manoir ne lâche pas ses visiteurs si facilement.
-
-![Vestibule](capture-1-vestibule.png)
 
 ## ✨ Fonctionnalités
 
@@ -56,10 +52,14 @@ Dépassez la case 63 ? Vous **rebondissez en arrière**… le manoir ne lâche p
 Aucune installation, aucun serveur, aucun build :
 
 ```bash
-git clone https://github.com/VOTRE-COMPTE/VOTRE-REPO.git
+git clone https://github.com/soltimax/Jeu-de-l-oie.git
 ```
 
-Puis ouvrez simplement **`maison-hantee.html`** dans votre navigateur (double-clic suffit).
+Puis ouvrez simplement **`jeu_de_l'oie_maison_hantee.html`** dans votre navigateur (double-clic suffit).
+
+📥 Ou téléchargez-le directement depuis GitHub :
+[jeu_de_l'oie_maison_hantee.html](https://github.com/soltimax/Jeu-de-l-oie/blob/main/jeu_de_l'oie_maison_hantee.html)
+→ bouton **« Download raw file »**, puis ouvrez le fichier téléchargé.
 
 ## 📱 Compatibilité
 
